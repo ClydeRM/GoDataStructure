@@ -1,0 +1,12 @@
+{
+    "configurations": [
+        {
+            "type": "go",
+            "name": "Go run main",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "$PROJECT_DIR$/main.go"
+            ]
+        }
+    ]
+}
