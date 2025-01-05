@@ -6,17 +6,27 @@ import (
 )
 
 func main() {
-	fmt.Println("Hello main.")
-	LinkedList.PrintLinkedList()
+	fmt.Println("run main.go..")
+	mylist := LinkedList.LinkedList[int]{}
+	nodeA := &LinkedList.Node[int]{Data: 10}
+	nodeB := &LinkedList.Node[int]{Data: 20}
+	nodeC := &LinkedList.Node[int]{Data: 30}
+	nodeD := &LinkedList.Node[int]{Data: 40}
+	nodeE := &LinkedList.Node[int]{Data: 50}
 
-	mylist := LinkedList.LinkedList{}
-	nodeA := &LinkedList.Node{Data: 10}
-	nodeB := &LinkedList.Node{Data: 20}
-	nodeC := &LinkedList.Node{Data: 30}
-	nodeD := &LinkedList.Node{Data: 40}
-
+	mylist.Prepend(nodeE)
 	mylist.Prepend(nodeD)
-	mylist.Prepend(nodeB)
 	mylist.Prepend(nodeC)
+	mylist.Prepend(nodeB)
 	mylist.Prepend(nodeA)
+
+	mylist.PrintListData()
+	fmt.Println(nodeB)
+
+	//	mylist.Update(100,5)
+	mylist.Reverse()
+
+	mylist.PrintListData()
+	fmt.Println(nodeB)
+
 }
