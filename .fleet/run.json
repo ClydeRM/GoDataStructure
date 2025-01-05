@@ -7,6 +7,16 @@
             "buildParams": [
                 "$PROJECT_DIR$/main.go"
             ]
-        }
+        },
+        {
+            "type": "go-test",
+            "name": "Go test engin_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/TypeAndStruct/"
+            ]
+        },
     ]
 }
