@@ -41,18 +41,20 @@ func (l *LinkedList[T]) Append(newNode *Node[T]) {
 }
 
 func (l *LinkedList[T]) Pop() {
-	if isEmpty := l.IsEmpty(); isEmpty{
+	if l.IsEmpty(){
 		fmt.Printf("Empty list: %v\n", l)
 		return
 	}
 
-	currTail := l.tail
-	currTailPrevNode := l.tail.prev
+	if l.length == 1 {
+		l.head = nil
+		l.tail = nil
+		l.length--
+		return
+	}
 
-	currTail.prev = nil
-	currTailPrevNode.next = nil
-
-	l.tail = currTailPrevNode
+	l.tail = l.tail.prev
+	l.tail.next = nil
 	l.length--
 }
 
@@ -250,9 +252,9 @@ func (l LinkedList[T]) PrintListData() {
 
 	for node != nil {
 		if node.next == nil {
-			fmt.Printf("%d\n", node.Data)
+			fmt.Printf("%v\n", node.Data)
 		} else {
-			fmt.Printf("%d -> \t", node.Data)
+			fmt.Printf("%v -> \t", node.Data)
 		}
 
 		node = node.next
