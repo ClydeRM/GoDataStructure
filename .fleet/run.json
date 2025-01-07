@@ -28,5 +28,15 @@
                 "$PROJECT_DIR$/LinkedList/"
             ]
         },
+        {
+            "type": "go-test",
+            "name": "Go test interface_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Interface/"
+            ]
+        },
     ]
 }
