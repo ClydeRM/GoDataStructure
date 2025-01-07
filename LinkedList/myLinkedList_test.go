@@ -10,9 +10,9 @@ func TestLinkedList_Prepend(t *testing.T) {
 		dataList []string
 	}
 	tests := []struct {
-		name   string
-		args   args
-		want   []string
+		name string
+		args args
+		want []string
 	}{
 		// test cases
 		{
@@ -25,7 +25,7 @@ func TestLinkedList_Prepend(t *testing.T) {
 		{
 			"Prepend_SingleNode",
 			args{
-				dataList:[]string{"Node1"},
+				dataList: []string{"Node1"},
 			},
 			[]string{"Node1"},
 		},
@@ -59,9 +59,9 @@ func TestLinkedList_Append(t *testing.T) {
 		dataList []string
 	}
 	tests := []struct {
-		name   string
-		args   args
-		want   []string
+		name string
+		args args
+		want []string
 	}{
 		// test cases
 		{
@@ -81,7 +81,7 @@ func TestLinkedList_Append(t *testing.T) {
 		{
 			"Append_MultipleList",
 			args{
-				dataList: []string{"Node1", "Node2","Node3"},
+				dataList: []string{"Node1", "Node2", "Node3"},
 			},
 			[]string{"Node1", "Node2", "Node3"},
 		},
@@ -108,9 +108,9 @@ func TestLinkedList_Pop(t *testing.T) {
 		dataList []string
 	}
 	tests := []struct {
-		name   string
-		args   args
-		want   []string
+		name string
+		args args
+		want []string
 	}{
 		// test cases
 		// test cases
@@ -131,7 +131,7 @@ func TestLinkedList_Pop(t *testing.T) {
 		{
 			"Pop_MultipleList",
 			args{
-				dataList: []string{"Node1", "Node2","Node3"},
+				dataList: []string{"Node1", "Node2", "Node3"},
 			},
 			[]string{"Node1", "Node2"},
 		},
@@ -154,7 +154,7 @@ func TestLinkedList_Pop(t *testing.T) {
 			}
 
 			if list.length != len(tt.want) {
-    			t.Errorf("LinkedList %s: length = %d, want = %d", "Pop()", list.length, len(tt.want))
+				t.Errorf("LinkedList %s: length = %d, want = %d", "Pop()", list.length, len(tt.want))
 			}
 
 		})
