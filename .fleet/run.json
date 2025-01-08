@@ -10,12 +10,22 @@
         },
         {
             "type": "go-test",
-            "name": "Go test engin_test",
+            "name": "Go test struct_test",
             "workingDir": "$PROJECT_DIR$",
             "goExecPath": "/usr/local/bin/go",
             "buildParams": [
                 "-v",
                 "$PROJECT_DIR$/TypeAndStruct/"
+            ]
+        },
+        {
+            "type": "go-test",
+            "name": "Go test interface_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Interface/"
             ]
         },
         {
@@ -30,12 +40,12 @@
         },
         {
             "type": "go-test",
-            "name": "Go test interface_test",
+            "name": "Go test bst_test",
             "workingDir": "$PROJECT_DIR$",
             "goExecPath": "/usr/local/bin/go",
             "buildParams": [
                 "-v",
-                "$PROJECT_DIR$/Interface/"
+                "$PROJECT_DIR$/BinarySearchTree/"
             ]
         },
     ]
