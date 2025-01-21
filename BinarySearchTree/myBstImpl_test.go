@@ -1,6 +1,7 @@
 package BinarySearchTree
 
 import (
+	"fmt"
 	"golang.org/x/exp/constraints"
 	"reflect"
 	"testing"
@@ -472,6 +473,103 @@ func TestBST_InOrderPredecessor(t *testing.T) {
 
 			if (gotValues == nil && tt.want != nil) || (gotValues != nil && gotValues.Data != tt.want.Data) {
 				t.Errorf("InOrderPredecessor : got = %v, want = %v", gotValues, tt.want)
+			}
+		})
+	}
+}
+
+func TestBST_Delete(t *testing.T) {
+	type args struct {
+		dataList []int
+		target   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		// test cases
+		{
+			"Delete_EmptyTree",
+			args{
+				dataList: []int{},
+				target:   0,
+			},
+			[]int{},
+		},
+		{
+			"Delete_SingleNode",
+			args{
+				dataList: []int{10},
+				target:   10,
+			},
+			[]int{},
+		},
+		{
+			"Delete_MultipleNode_NotFound",
+			args{
+				dataList: []int{10, 5, 15, 12, 20},
+				target:   9,
+			},
+			[]int{5, 10, 12, 15, 20},
+		},
+		{
+			"Delete_MultipleNode_LeafNode_left",
+			args{
+				dataList: []int{10, 5, 15, 12, 20},
+				target:   12,
+			},
+			[]int{5, 10, 15, 20},
+		},
+		{
+			"Delete_MultipleNode_LeafNode_right",
+			args{
+				dataList: []int{10, 5, 15, 12, 20},
+				target:   20,
+			},
+			[]int{5, 10, 12, 15},
+		},
+		{
+			"Delete_MultipleNode_OneChild_left",
+			args{
+				dataList: []int{10, 5, 4, 15, 12, 20},
+				target:   5,
+			},
+			[]int{4, 10, 12, 15, 20},
+		},
+		{
+			"Delete_MultipleNode_OneChild_right",
+			args{
+				dataList: []int{10, 5, 6, 15, 12, 20},
+				target:   6,
+			},
+			[]int{5, 10, 12, 15, 20},
+		},
+		{
+			"Delete_MultipleNode_BothChildren",
+			args{
+				dataList: []int{10, 5, 15, 12, 20},
+				target:   15,
+			},
+			[]int{5, 10, 12, 20},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tree := NewBST[int]()
+
+			for _, data := range tt.args.dataList {
+				tree.Insert(data)
+			}
+			fmt.Printf("before: %v \n", inOrderTraversal(tree.root))
+			tree.Delete(tt.args.target)
+
+			gotValues := inOrderTraversal(tree.root)
+			fmt.Printf("after: %v \n", gotValues)
+
+			if !reflect.DeepEqual(gotValues, tt.want) {
+				t.Errorf("BST : got = %v, want = %v", gotValues, tt.want)
 			}
 		})
 	}

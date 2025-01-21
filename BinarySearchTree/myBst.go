@@ -15,7 +15,8 @@ type Tree[T constraints.Ordered] interface {
 	IsEmpty() bool
 	Insert(data T) *Node[T]
 	Search(data T) *Node[T]
-	Delete(data T)
+	Delete(data T) *Node[T]
+	deleteRecursively(node *Node[T], data T) *Node[T]
 	Min(root *Node[T]) *Node[T]
 	Max(root *Node[T]) *Node[T]
 	PreOrderTraversal(root *Node[T]) []T

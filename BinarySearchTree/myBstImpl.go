@@ -152,3 +152,59 @@ func (bst *BST[T]) InOrderPredecessor(node *Node[T]) *Node[T] {
 	}
 	return predecessor
 }
+
+// nil 無刪除, other 有刪除
+func (bst *BST[T]) Delete(data T) *Node[T] {
+	if bst.IsEmpty() {
+		return nil
+	}
+
+	bst.root = bst.deleteRecursively(bst.root, data)
+	if bst.root != nil {
+		bst.root.parent = nil
+	}
+	return bst.root
+}
+
+func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
+	if node == nil {
+		return nil
+	}
+
+	if data < node.Data {
+		node.left = bst.deleteRecursively(node.left, data)
+	} else if data > node.Data {
+		node.right = bst.deleteRecursively(node.right, data)
+	} else {
+		// find the node
+		// case 1. node is leaf
+		if node.left == nil && node.right == nil {
+			node.parent = nil
+			return nil
+		}
+
+		// case 2. node have one child
+		if node.left == nil {
+			if node.right != nil {
+				node.right.parent = node.parent
+			}
+			return node.right
+		}
+		if node.right == nil {
+			if node.left != nil {
+				node.left.parent = node.parent
+			}
+			return node.left
+		}
+
+		// case 3. node have both childrens
+		successor := bst.Min(node.right)
+		node.Data = successor.Data
+		node.right = bst.deleteRecursively(node.right, node.Data)
+		if node.right != nil {
+			node.right.parent = node
+		}
+	}
+
+	return node
+}
