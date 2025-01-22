@@ -211,7 +211,7 @@ func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 	return node
 }
 
-func (bst BST[T]) Height() int {
+func (bst *BST[T]) Height() int {
 	return hightRecursively(bst.root)
 }
 
