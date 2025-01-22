@@ -1,5 +1,7 @@
 package BinarySearchTree
 
+import "golang.org/x/exp/constraints"
+
 func (bst *BST[T]) Root() *Node[T] {
 	return bst.root
 }
@@ -207,4 +209,29 @@ func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 	}
 
 	return node
+}
+
+func (bst BST[T]) Height() int {
+	return hightRecursively(bst.root)
+}
+
+func hightRecursively[T constraints.Ordered](node *Node[T]) int {
+	if node == nil {
+		return -1
+	}
+
+	// cal tree height with recursive
+	leftHeight := hightRecursively[T](node.left)
+	rightHeight := hightRecursively[T](node.right)
+
+	// plus root
+	return _max(leftHeight, rightHeight) + 1
+}
+
+func _max(a, b int) int {
+	if a > b {
+		return a
+	}
+
+	return b
 }

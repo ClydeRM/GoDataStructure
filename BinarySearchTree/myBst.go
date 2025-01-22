@@ -24,7 +24,5 @@ type Tree[T constraints.Ordered] interface {
 	PostOrderTraversal(root *Node[T]) []T
 	InOrderSuccessor(node *Node[T]) *Node[T]   // InOrder visit: next visit node
 	InOrderPredecessor(node *Node[T]) *Node[T] // InOrder visit: previous visit node
-
 	Height() int
-	Size() int
 }

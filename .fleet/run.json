@@ -48,5 +48,21 @@
                 "$PROJECT_DIR$/BinarySearchTree/"
             ]
         },
+        {
+            "name": "TestBST_Delete in GoDataStructure/BinarySearchTree",
+            "type": "go-test",
+            "workingDir": "$PROJECT_DIR$/BinarySearchTree",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": ["GoDataStructure/BinarySearchTree"],
+            "testRunPattern": "TestBST_Delete"
+        },
+        {
+            "name": "TestBST_Height in GoDataStructure/BinarySearchTree",
+            "type": "go-test",
+            "workingDir": "$PROJECT_DIR$/BinarySearchTree",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": ["GoDataStructure/BinarySearchTree"],
+            "testRunPattern": "TestBST_Height"
+        }
     ]
 }

@@ -575,6 +575,56 @@ func TestBST_Delete(t *testing.T) {
 	}
 }
 
+
+func TestBST_Height(t *testing.T) {
+	type args struct {
+		dataList []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// test cases
+		{
+			"Height_EmptyTree",
+			args{
+				dataList: []int{},
+			},
+			-1,
+		},
+		{
+			"Height_SingleNode",
+			args{
+				dataList: []int{10},
+			},
+			0,
+		},
+		{
+			"Height_MultipleNode_BothChildren",
+			args{
+				dataList: []int{10, 5, 15, 12, 20},
+			},
+			2,
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			tree := NewBST[int]()
+
+			for _, data := range tt.args.dataList {
+				tree.Insert(data)
+			}
+			fmt.Printf("BST: %v \n", inOrderTraversal(tree.root))
+			gotValues := tree.Height()
+
+			if !reflect.DeepEqual(gotValues, tt.want) {
+				t.Errorf("BST : got = %v, want = %v", gotValues, tt.want)
+			}
+		})
+	}
+}
 // 輔助函數：中序遍歷樹並返回節點資料的切片
 func inOrderTraversal[T constraints.Ordered](node *Node[T]) []T {
 	if node == nil {
