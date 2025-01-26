@@ -1,9 +1,6 @@
 package RedBlackTree
 
 import (
-	//	"fmt"
-	//	"golang.org/x/exp/constraints"
-	//	"reflect"
 	"golang.org/x/exp/constraints"
 	"testing"
 )
