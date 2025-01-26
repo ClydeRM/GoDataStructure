@@ -195,7 +195,7 @@ func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 			return node.left
 		}
 
-		// case 3. node have both childrens
+		// case 3. node have both children
 		successor := bst.Min(node.right)
 		node.Data = successor.Data
 		node.right = bst.deleteRecursively(node.right, node.Data)
