@@ -63,6 +63,24 @@
             "goExecPath": "/usr/local/bin/go",
             "buildParams": ["GoDataStructure/BinarySearchTree"],
             "testRunPattern": "TestBST_Height"
-        }
+        },
+        {
+            "type": "go-test",
+            "name": "Go test rbt_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/RedBlackTree/"
+            ]
+        },
+        {
+            "name": "TestRBT_Insert in GoDataStructure/RedBlackTree",
+            "type": "go-test",
+            "workingDir": "$PROJECT_DIR$/RedBlackTree",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": ["GoDataStructure/RedBlackTree"],
+            "testRunPattern": "TestRBT_Insert"
+        },
     ]
 }
