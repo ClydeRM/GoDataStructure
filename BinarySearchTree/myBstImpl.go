@@ -187,15 +187,11 @@ func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 
 		// case 2. node have one child
 		if node.left == nil {
-			if node.right != nil {
-				node.right.parent = node.parent
-			}
+			node.right.parent = node.parent
 			return node.right
 		}
 		if node.right == nil {
-			if node.left != nil {
-				node.left.parent = node.parent
-			}
+			node.left.parent = node.parent
 			return node.left
 		}
 
@@ -203,9 +199,6 @@ func (bst *BST[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 		successor := bst.Min(node.right)
 		node.Data = successor.Data
 		node.right = bst.deleteRecursively(node.right, node.Data)
-		if node.right != nil {
-			node.right.parent = node
-		}
 	}
 
 	return node
