@@ -52,7 +52,6 @@ func (rbt *RBT[T]) inOrderRecursively(node *Node[T], result []T) []T {
 	return result
 }
 
-// Insert
 func (rbt *RBT[T]) Insert(data T) {
 	// step 1. BST insert node
 	newNode := NewNode(data, RED) // default Color is red.
@@ -200,4 +199,274 @@ func (rbt *RBT[T]) rightRotate(target *Node[T]) {
 	// step 3. leftChild right reset
 	leftChild.right = target
 	target.parent = leftChild
+}
+
+func (rbt *RBT[T]) Delete(data T) {
+	// 找到節點
+	node := rbt.Search(rbt.root, data)
+	if node == rbt.nilNode {
+		return // 節點不存在
+	}
+
+	// 執行刪除
+	rbt.deleteNode(node)
+}
+
+// 找到指定數據的節點
+func (rbt *RBT[T]) Search(node *Node[T], data T) *Node[T] {
+	for node != rbt.nilNode {
+		if data == node.Data {
+			return node
+		} else if data < node.Data {
+			node = node.left
+		} else {
+			node = node.right
+		}
+	}
+	return rbt.nilNode
+}
+
+// 刪除節點邏輯
+func (rbt *RBT[T]) deleteNode(target *Node[T]) {
+	var child, toFix *Node[T]
+	originalColor := target.Color
+
+	if target.left == rbt.nilNode {
+		// case 1: target no left child
+		child = target.right
+		rbt.transplant(target, target.right)
+		toFix = child
+	} else if target.right == rbt.nilNode {
+		// case 2: target no right child
+		child = target.left
+		rbt.transplant(target, target.left)
+		toFix = child
+	} else {
+		// case 3: target have both children
+		successor := rbt.minimum(target.right) // 找到後繼節點
+		originalColor = successor.Color
+		child = successor.right
+		toFix = child
+
+		if successor.parent == target {
+			child.parent = successor
+		} else {
+			rbt.transplant(successor, successor.right)
+			successor.right = target.right
+			successor.right.parent = successor
+		}
+		rbt.transplant(target, successor)
+		successor.left = target.left
+		successor.left.parent = successor
+		successor.Color = target.Color
+	}
+
+	// fix rbt property, when target is black
+	if originalColor == BLACK {
+		rbt.fixDelete(toFix)
+	}
+}
+
+// 找到子樹中最小值節點
+func (rbt *RBT[T]) minimum(node *Node[T]) *Node[T] {
+	for node.left != rbt.nilNode {
+		node = node.left
+	}
+	return node
+}
+
+// 替換節點
+func (rbt *RBT[T]) transplant(u, v *Node[T]) {
+	if u.parent == nil {
+		rbt.root = v
+	} else if u == u.parent.left {
+		u.parent.left = v
+	} else {
+		u.parent.right = v
+	}
+	v.parent = u.parent
+}
+
+func (rbt *RBT[T]) fixDelete(node *Node[T]) {
+	for node != rbt.root && node.Color == BLACK {
+		if node == node.parent.left {
+			sibling := node.parent.right
+
+			// case 1: sibling is red
+			if sibling.Color == RED {
+				sibling.Color = BLACK
+				node.parent.Color = RED
+				rbt.leftRotate(node.parent)
+				sibling = node.parent.right
+			}
+
+			// case 2: sibling is black & both children are black
+			if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+				sibling.Color = RED
+				node = node.parent
+			} else {
+				// case 3: right is black, left is red
+				if sibling.right.Color == BLACK {
+					sibling.left.Color = BLACK
+					sibling.Color = RED
+					rbt.rightRotate(sibling)
+					sibling = node.parent.right
+				}
+				// case 4: both are red
+				sibling.Color = node.parent.Color
+				node.parent.Color = BLACK
+				sibling.right.Color = BLACK
+				rbt.leftRotate(node.parent)
+				node = rbt.root
+			}
+		} else {
+			// symmetry above
+			sibling := node.parent.left
+
+			// case 1: sibling is red
+			if sibling.Color == RED {
+				sibling.Color = BLACK
+				node.parent.Color = RED
+				rbt.rightRotate(node.parent)
+				sibling = node.parent.left
+			}
+
+			// case 2: sibling is black and both children are black
+			if sibling.right.Color == BLACK && sibling.left.Color == BLACK {
+				sibling.Color = RED
+				node = node.parent
+			} else {
+				// case 3: left is black, right is red
+				if sibling.left.Color == BLACK {
+					sibling.right.Color = BLACK
+					sibling.Color = RED
+					rbt.leftRotate(sibling)
+					sibling = node.parent.left
+				}
+				// case 4: both are red
+				sibling.Color = node.parent.Color
+				node.parent.Color = BLACK
+				sibling.left.Color = BLACK
+				rbt.rightRotate(node.parent)
+				node = rbt.root
+			}
+		}
+	}
+	node.Color = BLACK
+}
+
+
+func (rbt *RBT[T]) DeleteRecursively(data T) *Node[T] {
+	if rbt.IsEmpty() {
+		return rbt.root
+	}
+
+	rbt.root = rbt.deleteRecursively(rbt.root, data)
+	rbt.root.parent = rbt.nilNode
+	rbt.root.Color = BLACK
+	return rbt.root
+}
+
+func (rbt *RBT[T]) deleteRecursively(node *Node[T], data T) *Node[T]{
+	if node == rbt.nilNode {
+		return rbt.nilNode
+	}
+
+	if data < node.Data {
+		node.left = rbt.deleteRecursively(node.left, data)
+	} else if data > node.Data {
+		node.right = rbt.deleteRecursively(node.right, data)
+	} else {
+		// find the target
+		if node.left == rbt.nilNode && node.right == rbt.nilNode {
+			// Case 1: target is leaf
+			return rbt.nilNode
+		} else if node.left == rbt.nilNode {
+			// Case 2: target only have subright
+			return node.right
+		} else if node.right == rbt.nilNode {
+			// Case 3: target only have subleft
+			return node.left
+		} else {
+			// Case 4: target have both
+			successor := rbt.minimum(node.right) // 找到後繼節點
+			node.Data = successor.Data
+			node.right = rbt.deleteRecursively(node.right, successor.Data)
+		}
+	}
+
+	// fix rbt property
+	return rbt.fixDeleteRecursively(node)
+}
+
+func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
+	if node.Color == RED {
+		return node
+	}
+
+	// if the delete node is black, fix rbt property
+	// node is left child
+	if node == node.parent.left {
+		sibling := node.parent.right
+
+		// Case 1: sibling is red
+		if sibling.Color == RED {
+			sibling.Color = BLACK
+			node.parent.Color = RED
+			rbt.leftRotate(node.parent)
+			sibling = node.parent.right
+		}
+
+		// Case 2: sibling is black, and both children are black
+		if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+			sibling.Color = RED
+			return node.parent
+		}
+
+		// Case 3: right is black, left is red
+		if sibling.right.Color == BLACK {
+			sibling.left.Color = BLACK
+			sibling.Color = RED
+			rbt.rightRotate(sibling)
+			sibling = node.parent.right
+		}
+
+		// Case 4: both are red
+		sibling.Color = node.parent.Color
+		node.parent.Color = BLACK
+		sibling.right.Color = BLACK
+		rbt.leftRotate(node.parent)
+	} else {
+		// symmetry above
+		sibling := node.parent.left
+
+		// Case 1: sibling is red
+		if sibling.Color == RED {
+			sibling.Color = BLACK
+			node.parent.Color = RED
+			rbt.rightRotate(node.parent)
+			sibling = node.parent.left
+		}
+
+		// Case 2: sibling is black, and both children are black
+		if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+			sibling.Color = RED
+			return node.parent
+		}
+
+		// Case 3: left is black, right is red
+		if sibling.left.Color == BLACK {
+			sibling.right.Color = BLACK
+			sibling.Color = RED
+			rbt.leftRotate(sibling)
+			sibling = node.parent.left
+		}
+
+		// Case 4: both are red
+		sibling.Color = node.parent.Color
+		node.parent.Color = BLACK
+		sibling.left.Color = BLACK
+		rbt.rightRotate(node.parent)
+	}
+	return node
 }

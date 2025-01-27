@@ -82,5 +82,13 @@
             "buildParams": ["GoDataStructure/RedBlackTree"],
             "testRunPattern": "TestRBT_Insert"
         },
+        {
+            "name": "TestRBT_Delete_Iterative in GoDataStructure/RedBlackTree",
+            "type": "go-test",
+            "workingDir": "$PROJECT_DIR$/RedBlackTree",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": ["GoDataStructure/RedBlackTree"],
+            "testRunPattern": "TestRBT_Delete"
+        },
     ]
 }
