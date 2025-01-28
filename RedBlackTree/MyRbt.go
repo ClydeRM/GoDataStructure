@@ -9,7 +9,14 @@ type RBT[T constraints.Ordered] struct {
 }
 
 func NewRBT[T constraints.Ordered]() *RBT[T] {
-    return &RBT[T]{nil, 0, nil}
+    nilNode := &Node[T]{ // 初始化哨兵節點
+        Data:   *new(T),
+        Color:  BLACK,
+        parent: nil,
+        left:   nil,
+        right:  nil,
+    }
+    return &RBT[T]{nilNode, 0, nilNode}
 }
 
 type Tree[T constraints.Ordered] interface {

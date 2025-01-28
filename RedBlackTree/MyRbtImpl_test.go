@@ -1,6 +1,7 @@
 package RedBlackTree
 
 import (
+	"fmt"
 	"golang.org/x/exp/constraints"
 	"testing"
 )
@@ -49,6 +50,7 @@ func TestRBT_Insert(t *testing.T) {
 			// validate logic
 			// 1. inorder traversal correctly
 			got := rbt.InOrderTraversal(rbt.root)
+			fmt.Printf("RBT: %v \n", got)
 			if !isEqual(got, tt.want) {
 				t.Errorf("RBT Insert failed: got %v, want %v", got, tt.want)
 			}
@@ -61,7 +63,7 @@ func TestRBT_Insert(t *testing.T) {
 	}
 }
 
-func TestRBT_Delete(t *testing.T) {
+func TestRBT_Delete_Iterative(t *testing.T) {
 	type args struct {
 		dataList []int
 		target   int
@@ -144,12 +146,14 @@ func TestRBT_Delete(t *testing.T) {
 			for _, data := range tt.args.dataList {
 				rbt.Insert(data)
 			}
-
-			// 刪除目標節點
+			fmt.Printf("before: %v \n", rbt.InOrderTraversal(rbt.root))
+			fmt.Printf("RBT Delete: %v \n", tt.args.target)
 			rbt.Delete(tt.args.target)
 
 			// 驗證樹中序遍歷結果是否正確
 			got := rbt.InOrderTraversal(rbt.root)
+			fmt.Printf("after: %v \n", got)
+
 			if !isEqual(got, tt.want) {
 				t.Errorf("RBT Delete failed: got %v, want %v", got, tt.want)
 			}
@@ -162,6 +166,108 @@ func TestRBT_Delete(t *testing.T) {
 	}
 }
 
+func TestRBT_Delete_Recursively(t *testing.T) {
+	type args struct {
+		dataList []int
+		target   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			"Delete_EmptyTree",
+			args{
+				dataList: []int{},
+				target:   0,
+			},
+			[]int{},
+		},
+		{
+			"Delete_SingleNode",
+			args{
+				dataList: []int{1},
+				target:   1,
+			},
+			[]int{},
+		},
+		{
+			"Delete_RootNodeWithOneChild",
+			args{
+				dataList: []int{2, 1},
+				target:   2,
+			},
+			[]int{1},
+		},
+		{
+			"Delete_RootNodeWithTwoChildren",
+			args{
+				dataList: []int{10, 5, 15},
+				target:   10,
+			},
+			[]int{5, 15},
+		},
+		{
+			"Delete_NodeWithTwoChildren",
+			args{
+				dataList: []int{20, 10, 30, 5, 15},
+				target:   10,
+			},
+			[]int{5, 15, 20, 30},
+		},
+		{
+			"Delete_NodeWithOneChild",
+			args{
+				dataList: []int{8, 4, 10, 2},
+				target:   4,
+			},
+			[]int{2, 8, 10},
+		},
+		{
+			"Delete_LeafNode",
+			args{
+				dataList: []int{8, 4, 10, 2},
+				target:   2,
+			},
+			[]int{4, 8, 10},
+		},
+		{
+			"Delete_MultipleNodes",
+			args{
+				dataList: []int{40, 20, 60, 10, 30, 50, 70},
+				target:   20,
+			},
+			[]int{10, 30, 40, 50, 60, 70},
+		},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			// 初始化紅黑樹
+			rbt := NewRBT[int]()
+			for _, data := range tt.args.dataList {
+				rbt.Insert(data)
+			}
+			fmt.Printf("before: %v \n", rbt.InOrderTraversal(rbt.root))
+			fmt.Printf("RBT Delete: %v \n", tt.args.target)
+			rbt.DeleteRecursively(tt.args.target)
+
+			// 驗證樹中序遍歷結果是否正確
+			got := rbt.InOrderTraversal(rbt.root)
+			fmt.Printf("after: %v \n", got)
+
+			if !isEqual(got, tt.want) {
+				t.Errorf("RBT Delete failed: got %v, want %v", got, tt.want)
+			}
+
+			// 驗證紅黑樹是否依然符合性質
+			if !isValidRBT(rbt.root, rbt.nilNode) {
+				t.Errorf("RBT properties violated after Delete")
+			}
+		})
+	}
+}
 
 func isEqual[T comparable](a, b []T) bool {
 	if len(a) != len(b) {

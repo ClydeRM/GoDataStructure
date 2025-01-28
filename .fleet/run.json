@@ -88,7 +88,15 @@
             "workingDir": "$PROJECT_DIR$/RedBlackTree",
             "goExecPath": "/usr/local/bin/go",
             "buildParams": ["GoDataStructure/RedBlackTree"],
-            "testRunPattern": "TestRBT_Delete"
+            "testRunPattern": "TestRBT_Delete_Iterative"
+        },
+        {
+            "name": "TestRBT_Delete_Recursively in GoDataStructure/RedBlackTree",
+            "type": "go-test",
+            "workingDir": "$PROJECT_DIR$/RedBlackTree",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": ["GoDataStructure/RedBlackTree"],
+            "testRunPattern": "TestRBT_Delete_Recursively"
         },
     ]
 }

@@ -1,53 +1,53 @@
 package RedBlackTree
 
 func (rbt *RBT[T]) IsEmpty() bool {
-    return rbt.root == nil
+	return rbt.root == nil
 }
 
 func (rbt *RBT[T]) Size() int {
-    return rbt.size
+	return rbt.size
 }
 
 func (rbt *RBT[T]) Min() (T, bool) {
-    if rbt.IsEmpty() {
-        var zero T
-        return zero, false
-    }
-    node := rbt.root
-    for node.left != nil {
-        node = node.left
-    }
-    return node.Data, true
+	if rbt.IsEmpty() {
+		var zero T
+		return zero, false
+	}
+	node := rbt.root
+	for node.left != nil {
+		node = node.left
+	}
+	return node.Data, true
 }
 
 func (rbt *RBT[T]) Max() (T, bool) {
-    if rbt.IsEmpty() {
-        var zero T
-        return zero, false
-    }
-    node := rbt.root
-    for node.right != nil {
-        node = node.right
-    }
-    return node.Data, true
+	if rbt.IsEmpty() {
+		var zero T
+		return zero, false
+	}
+	node := rbt.root
+	for node.right != nil {
+		node = node.right
+	}
+	return node.Data, true
 }
 
 func (rbt *RBT[T]) InOrderTraversal(root *Node[T]) []T {
-    // 減少Slice 的複製跟append效能消耗
-    return rbt.inOrderRecursively(root, []T{})
+	// 減少Slice 的複製跟append效能消耗
+	return rbt.inOrderRecursively(root, []T{})
 }
 
 func (rbt *RBT[T]) inOrderRecursively(node *Node[T], result []T) []T {
-    if node == nil {
+	if node == nil || node == rbt.nilNode {
 		return result
 	}
 
-    // LVR
+	// LVR
 	result = rbt.inOrderRecursively(node.left, result)
 
-    result = append(result, node.Data)
+	result = append(result, node.Data)
 
-    result = rbt.inOrderRecursively(node.right, result)
+	result = rbt.inOrderRecursively(node.right, result)
 
 	return result
 }
@@ -228,42 +228,46 @@ func (rbt *RBT[T]) Search(node *Node[T], data T) *Node[T] {
 
 // 刪除節點邏輯
 func (rbt *RBT[T]) deleteNode(target *Node[T]) {
-	var child, toFix *Node[T]
-	originalColor := target.Color
+	var x, y *Node[T]
+	y = target
+	originalColor := y.Color
 
 	if target.left == rbt.nilNode {
 		// case 1: target no left child
-		child = target.right
+		x = target.right
 		rbt.transplant(target, target.right)
-		toFix = child
 	} else if target.right == rbt.nilNode {
 		// case 2: target no right child
-		child = target.left
+		x = target.left
 		rbt.transplant(target, target.left)
-		toFix = child
 	} else {
 		// case 3: target have both children
-		successor := rbt.minimum(target.right) // 找到後繼節點
-		originalColor = successor.Color
-		child = successor.right
-		toFix = child
+		y = rbt.minimum(target.right) // 找到後繼節點
+		originalColor = y.Color
+		x = y.right
 
-		if successor.parent == target {
-			child.parent = successor
+		if y.parent == target {
+			x.parent = y
 		} else {
-			rbt.transplant(successor, successor.right)
-			successor.right = target.right
-			successor.right.parent = successor
+			rbt.transplant(y, y.right)
+			y.right = target.right
+			y.right.parent = y
 		}
-		rbt.transplant(target, successor)
-		successor.left = target.left
-		successor.left.parent = successor
-		successor.Color = target.Color
+		rbt.transplant(target, y)
+		y.left = target.left
+		y.left.parent = y
+		y.Color = target.Color
 	}
 
 	// fix rbt property, when target is black
 	if originalColor == BLACK {
-		rbt.fixDelete(toFix)
+		rbt.fixDelete(x)
+	}
+
+	rbt.size--
+	rbt.root.parent = nil
+	if rbt.root == rbt.nilNode {
+		rbt.size = 0
 	}
 }
 
@@ -277,7 +281,7 @@ func (rbt *RBT[T]) minimum(node *Node[T]) *Node[T] {
 
 // 替換節點
 func (rbt *RBT[T]) transplant(u, v *Node[T]) {
-	if u.parent == nil {
+	if u.parent == nil || u.parent == rbt.nilNode {
 		rbt.root = v
 	} else if u == u.parent.left {
 		u.parent.left = v
@@ -289,6 +293,10 @@ func (rbt *RBT[T]) transplant(u, v *Node[T]) {
 
 func (rbt *RBT[T]) fixDelete(node *Node[T]) {
 	for node != rbt.root && node.Color == BLACK {
+		if node == rbt.nilNode || node.parent == nil {
+			break
+		}
+
 		if node == node.parent.left {
 			sibling := node.parent.right
 
@@ -301,7 +309,8 @@ func (rbt *RBT[T]) fixDelete(node *Node[T]) {
 			}
 
 			// case 2: sibling is black & both children are black
-			if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+			if (sibling.left == rbt.nilNode || sibling.left.Color == BLACK) &&
+				(sibling.right == rbt.nilNode || sibling.right.Color == BLACK) {
 				sibling.Color = RED
 				node = node.parent
 			} else {
@@ -332,7 +341,8 @@ func (rbt *RBT[T]) fixDelete(node *Node[T]) {
 			}
 
 			// case 2: sibling is black and both children are black
-			if sibling.right.Color == BLACK && sibling.left.Color == BLACK {
+			if (sibling.left == rbt.nilNode || sibling.left.Color == BLACK) &&
+				(sibling.right == rbt.nilNode || sibling.right.Color == BLACK) {
 				sibling.Color = RED
 				node = node.parent
 			} else {
@@ -355,19 +365,20 @@ func (rbt *RBT[T]) fixDelete(node *Node[T]) {
 	node.Color = BLACK
 }
 
-
 func (rbt *RBT[T]) DeleteRecursively(data T) *Node[T] {
 	if rbt.IsEmpty() {
 		return rbt.root
 	}
 
 	rbt.root = rbt.deleteRecursively(rbt.root, data)
-	rbt.root.parent = rbt.nilNode
-	rbt.root.Color = BLACK
+	if rbt.root != nil {
+		rbt.root.parent = rbt.nilNode
+		rbt.root.Color = BLACK
+	}
 	return rbt.root
 }
 
-func (rbt *RBT[T]) deleteRecursively(node *Node[T], data T) *Node[T]{
+func (rbt *RBT[T]) deleteRecursively(node *Node[T], data T) *Node[T] {
 	if node == rbt.nilNode {
 		return rbt.nilNode
 	}
@@ -378,21 +389,25 @@ func (rbt *RBT[T]) deleteRecursively(node *Node[T], data T) *Node[T]{
 		node.right = rbt.deleteRecursively(node.right, data)
 	} else {
 		// find the target
+		// Case 1: target is leaf
 		if node.left == rbt.nilNode && node.right == rbt.nilNode {
-			// Case 1: target is leaf
 			return rbt.nilNode
-		} else if node.left == rbt.nilNode {
-			// Case 2: target only have subright
-			return node.right
-		} else if node.right == rbt.nilNode {
-			// Case 3: target only have subleft
-			return node.left
-		} else {
-			// Case 4: target have both
-			successor := rbt.minimum(node.right) // 找到後繼節點
-			node.Data = successor.Data
-			node.right = rbt.deleteRecursively(node.right, successor.Data)
 		}
+
+		// Case 2: target only have subright
+		if node.left == rbt.nilNode {
+			return node.right
+		}
+
+		// Case 3: target only have subleft
+		if node.right == rbt.nilNode {
+			return node.left
+		}
+
+		// Case 4: target have both
+		successor := rbt.minimum(node.right) // 找到後繼節點
+		node.Data = successor.Data
+		node.right = rbt.deleteRecursively(node.right, successor.Data)
 	}
 
 	// fix rbt property
@@ -400,7 +415,7 @@ func (rbt *RBT[T]) deleteRecursively(node *Node[T], data T) *Node[T]{
 }
 
 func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
-	if node.Color == RED {
+	if node.parent == nil || node.Color == RED {
 		return node
 	}
 
@@ -408,6 +423,10 @@ func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
 	// node is left child
 	if node == node.parent.left {
 		sibling := node.parent.right
+
+		if sibling == nil || sibling == rbt.nilNode {
+			return node
+		}
 
 		// Case 1: sibling is red
 		if sibling.Color == RED {
@@ -418,14 +437,17 @@ func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
 		}
 
 		// Case 2: sibling is black, and both children are black
-		if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+		if (sibling.left == rbt.nilNode || sibling.left.Color == BLACK) &&
+			(sibling.right == rbt.nilNode || sibling.right.Color == BLACK) {
 			sibling.Color = RED
 			return node.parent
 		}
 
 		// Case 3: right is black, left is red
-		if sibling.right.Color == BLACK {
-			sibling.left.Color = BLACK
+		if sibling.right == rbt.nilNode || sibling.right.Color == BLACK {
+			if sibling.left != rbt.nilNode {
+				sibling.left.Color = BLACK
+			}
 			sibling.Color = RED
 			rbt.rightRotate(sibling)
 			sibling = node.parent.right
@@ -434,11 +456,18 @@ func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
 		// Case 4: both are red
 		sibling.Color = node.parent.Color
 		node.parent.Color = BLACK
+		if sibling.right != rbt.nilNode {
+			sibling.right.Color = BLACK
+		}
 		sibling.right.Color = BLACK
 		rbt.leftRotate(node.parent)
 	} else {
 		// symmetry above
 		sibling := node.parent.left
+
+		if sibling == rbt.nilNode {
+			return node // 防止空指標錯誤
+		}
 
 		// Case 1: sibling is red
 		if sibling.Color == RED {
@@ -449,14 +478,17 @@ func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
 		}
 
 		// Case 2: sibling is black, and both children are black
-		if sibling.left.Color == BLACK && sibling.right.Color == BLACK {
+		if (sibling.left == rbt.nilNode || sibling.left.Color == BLACK) &&
+			(sibling.right == rbt.nilNode || sibling.right.Color == BLACK) {
 			sibling.Color = RED
 			return node.parent
 		}
 
 		// Case 3: left is black, right is red
-		if sibling.left.Color == BLACK {
-			sibling.right.Color = BLACK
+		if sibling.left == rbt.nilNode || sibling.left.Color == BLACK {
+			if sibling.right != rbt.nilNode {
+				sibling.right.Color = BLACK
+			}
 			sibling.Color = RED
 			rbt.leftRotate(sibling)
 			sibling = node.parent.left
@@ -465,8 +497,13 @@ func (rbt *RBT[T]) fixDeleteRecursively(node *Node[T]) *Node[T] {
 		// Case 4: both are red
 		sibling.Color = node.parent.Color
 		node.parent.Color = BLACK
+		if sibling.left != rbt.nilNode {
+			sibling.left.Color = BLACK
+		}
 		sibling.left.Color = BLACK
 		rbt.rightRotate(node.parent)
 	}
+
+	node.Color = BLACK
 	return node
 }
