@@ -53,7 +53,9 @@
             "type": "go-test",
             "workingDir": "$PROJECT_DIR$/BinarySearchTree",
             "goExecPath": "/usr/local/bin/go",
-            "buildParams": ["GoDataStructure/BinarySearchTree"],
+            "buildParams": [
+                "GoDataStructure/BinarySearchTree"
+            ],
             "testRunPattern": "TestBST_Delete"
         },
         {
@@ -61,7 +63,9 @@
             "type": "go-test",
             "workingDir": "$PROJECT_DIR$/BinarySearchTree",
             "goExecPath": "/usr/local/bin/go",
-            "buildParams": ["GoDataStructure/BinarySearchTree"],
+            "buildParams": [
+                "GoDataStructure/BinarySearchTree"
+            ],
             "testRunPattern": "TestBST_Height"
         },
         {
@@ -79,7 +83,9 @@
             "type": "go-test",
             "workingDir": "$PROJECT_DIR$/RedBlackTree",
             "goExecPath": "/usr/local/bin/go",
-            "buildParams": ["GoDataStructure/RedBlackTree"],
+            "buildParams": [
+                "GoDataStructure/RedBlackTree"
+            ],
             "testRunPattern": "TestRBT_Insert"
         },
         {
@@ -87,16 +93,10 @@
             "type": "go-test",
             "workingDir": "$PROJECT_DIR$/RedBlackTree",
             "goExecPath": "/usr/local/bin/go",
-            "buildParams": ["GoDataStructure/RedBlackTree"],
+            "buildParams": [
+                "GoDataStructure/RedBlackTree"
+            ],
             "testRunPattern": "TestRBT_Delete_Iterative"
-        },
-        {
-            "name": "TestRBT_Delete_Recursively in GoDataStructure/RedBlackTree",
-            "type": "go-test",
-            "workingDir": "$PROJECT_DIR$/RedBlackTree",
-            "goExecPath": "/usr/local/bin/go",
-            "buildParams": ["GoDataStructure/RedBlackTree"],
-            "testRunPattern": "TestRBT_Delete_Recursively"
         },
     ]
 }
