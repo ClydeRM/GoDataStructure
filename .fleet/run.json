@@ -98,5 +98,15 @@
             ],
             "testRunPattern": "TestRBT_Delete_Iterative"
         },
+        {
+            "type": "go-test",
+            "name": "Go test Graph_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Graph/"
+            ]
+        },
     ]
 }
