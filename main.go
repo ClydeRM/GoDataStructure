@@ -1,32 +1,30 @@
 package main
 
 import (
-	"GoDataStructure/LinkedList"
+	"GoDataStructure/Graph"
 	"fmt"
 )
 
 func main() {
 	fmt.Println("run main.go..")
-	mylist := LinkedList.LinkedList[int]{}
-	nodeA := &LinkedList.Node[int]{Data: 10}
-	nodeB := &LinkedList.Node[int]{Data: 20}
-	nodeC := &LinkedList.Node[int]{Data: 30}
-	nodeD := &LinkedList.Node[int]{Data: 40}
-	nodeE := &LinkedList.Node[int]{Data: 50}
+	graph := Graph.NewGraph()
+	graph.AddVertex("A")
+	graph.AddVertex("B")
+	graph.AddVertex("C")
+	graph.AddVertex("D")
+	graph.AddVertex("E")
 
-	mylist.Prepend(nodeE)
-	mylist.Prepend(nodeD)
-	mylist.Prepend(nodeC)
-	mylist.Prepend(nodeB)
-	mylist.Prepend(nodeA)
+	graph.AddEdge("A", "B", 1)
+	graph.AddEdge("A", "D", 1)
+	graph.AddEdge("B", "C", 1)
+	graph.AddEdge("B", "E", 1)
+	graph.AddEdge("D", "E", 1)
 
-	mylist.PrintListData()
-	fmt.Println(nodeB)
+	graph.PrintGraph()
+	result := graph.DFS("A")
+	fmt.Println(result) // [A D E B C]
 
-	//	mylist.Update(100,5)
-	mylist.Reverse()
-
-	mylist.PrintListData()
-	fmt.Println(nodeB)
+	result2 := graph.BFS("A")
+	fmt.Println(result2) // [A B D C E]
 
 }

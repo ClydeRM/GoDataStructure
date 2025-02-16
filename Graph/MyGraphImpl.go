@@ -1,6 +1,8 @@
 package Graph
 
-import "fmt"
+import (
+    "fmt"
+)
 
 func (g *Graph) AddVertex(id string) {
     if _, exists := g.Vertices[id]; exists {
@@ -111,4 +113,59 @@ func (g *Graph) PrintGraph() {
             fmt.Printf("Edge to %v, weight: %v\n", edge.To, edge.Weight)
         }
     }
+}
+
+func (g *Graph) DFS(start string) []string {
+    if _, isExist := g.Vertices[start]; !isExist {
+        return []string{}
+    }
+
+    var result []string
+    visited := make(map[string]bool)
+
+    visited[start] = true
+    stack := []string{start}
+
+    for len(stack) != 0 {
+        vertex := stack[len(stack)-1]
+        stack = stack[:len(stack)-1]
+
+        result = append(result, vertex)
+
+        for _, edge := range g.Vertices[vertex].Edges {
+            if !visited[edge.To] {
+                visited[edge.To] = true
+                stack = append(stack, edge.To)
+            }
+        }
+
+    }
+    return result
+}
+
+func (g *Graph) BFS(start string) []string {
+    if _, isExist := g.Vertices[start]; !isExist {
+        return []string{}
+    }
+
+    var result []string
+    visited := make(map[string]bool)
+
+    visited[start] = true
+    queue := []string{start}
+
+    for len(queue) != 0 {
+        vertex := queue[0]
+        queue = queue[1:]
+
+        result = append(result, vertex)
+
+        for _, edge := range g.Vertices[vertex].Edges {
+            if !visited[edge.To] {
+                visited[edge.To] = true
+                queue = append(queue, edge.To)
+            }
+        }
+    }
+    return result
 }
