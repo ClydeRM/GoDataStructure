@@ -194,6 +194,7 @@ func (g *Graph) BFSHelper(start string, visited *map[string]bool) []string {
     return result
 }
 
+// FindConnectedComponents Undirected Graph (or two way)
 func (g *Graph) FindConnectedComponents() [][]string {
     visited := make(map[string]bool)
     var components [][]string
@@ -224,4 +225,76 @@ func (g *Graph) IsConnected(v1, v2 string) bool {
     }
 
     return false
+}
+
+// FindStronglyConnectedComponents Kosaraju's Algorithm
+func (g *Graph) FindStronglyConnectedComponents() [][]string {
+    var stack []string
+    visited := make(map[string]bool)
+
+    // Step 1: DFS 正向圖 and 記錄完成順序（stack）
+    for id := range g.Vertices {
+        if !visited[id] {
+            g.dfsFillStack(id, visited, &stack)
+        }
+    }
+
+    // Step 2: 建立反向圖
+    reversedGraph := g.reverseGraph()
+
+    // Step 3: 根據 stack 順序，在反向圖上執行 DFS
+    visited = make(map[string]bool)
+    var components [][]string
+
+    for len(stack) > 0 {
+        node := stack[len(stack)-1]
+        stack = stack[:len(stack)-1] // pop
+
+        if !visited[node] {
+            var component []string
+            reversedGraph.dfsCollectSCC(node, visited, &component)
+            components = append(components, component)
+        }
+    }
+
+    return components
+}
+
+func (g *Graph) dfsFillStack(vertex string, visited map[string]bool, stack *[]string) {
+    visited[vertex] = true
+
+    for _, edge := range g.Vertices[vertex].Edges {
+        if !visited[edge.To] {
+            g.dfsFillStack(edge.To, visited, stack)
+        }
+    }
+
+    *stack = append(*stack, vertex)
+}
+
+func (g *Graph) reverseGraph() *Graph {
+    reversedGraph := NewGraph()
+
+    for id := range g.Vertices {
+        reversedGraph.AddVertex(id)
+    }
+
+    for from, vertex := range g.Vertices {
+        for _, edge := range vertex.Edges {
+            reversedGraph.AddEdge(edge.To, from, edge.Weight) // 反向邊
+        }
+    }
+
+    return reversedGraph
+}
+
+func (g *Graph) dfsCollectSCC(vertex string, visited map[string]bool, component *[]string) {
+    visited[vertex] = true
+    *component = append(*component, vertex)
+
+    for _, edge := range g.Vertices[vertex].Edges {
+        if !visited[edge.To] {
+            g.dfsCollectSCC(edge.To, visited, component)
+        }
+    }
 }

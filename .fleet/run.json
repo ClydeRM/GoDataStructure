@@ -108,5 +108,16 @@
                 "$PROJECT_DIR$/Graph/"
             ]
         },
+        {
+            "type": "go-test",
+            "name": "Go test Graph_Find_SCC_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Graph/"
+            ],
+            "testRunPattern": "TestGraph_FindStronglyConnectedComponents"
+        },
     ]
 }

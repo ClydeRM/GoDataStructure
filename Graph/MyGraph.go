@@ -29,4 +29,5 @@ type GraphInterface interface {
     // Connected Components
     FindConnectedComponents() [][]string // find all connected component
     IsConnected(v1, v2 string) bool // chack both components are connected
+    FindStronglyConnectedComponents() [][]string
 }
