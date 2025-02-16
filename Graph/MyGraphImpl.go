@@ -116,14 +116,26 @@ func (g *Graph) PrintGraph() {
 }
 
 func (g *Graph) DFS(start string) []string {
+    visited := make(map[string]bool)
+    return g.DFSHelper(start, &visited)
+}
+
+func (g *Graph) DFSHelper(start string, visited *map[string]bool) []string {
     if _, isExist := g.Vertices[start]; !isExist {
         return []string{}
     }
 
     var result []string
-    visited := make(map[string]bool)
+    if *visited == nil {
+        *visited = make(map[string]bool)
+    }
 
-    visited[start] = true
+    // if visited: return []
+    if (*visited)[start] {
+        return []string{}
+    }
+
+    (*visited)[start] = true
     stack := []string{start}
 
     for len(stack) != 0 {
@@ -133,8 +145,8 @@ func (g *Graph) DFS(start string) []string {
         result = append(result, vertex)
 
         for _, edge := range g.Vertices[vertex].Edges {
-            if !visited[edge.To] {
-                visited[edge.To] = true
+            if !(*visited)[edge.To] {
+                (*visited)[edge.To] = true
                 stack = append(stack, edge.To)
             }
         }
@@ -144,14 +156,26 @@ func (g *Graph) DFS(start string) []string {
 }
 
 func (g *Graph) BFS(start string) []string {
+    visited := make(map[string]bool)
+    return g.BFSHelper(start, &visited)
+}
+
+func (g *Graph) BFSHelper(start string, visited *map[string]bool) []string {
     if _, isExist := g.Vertices[start]; !isExist {
         return []string{}
     }
 
     var result []string
-    visited := make(map[string]bool)
+    if *visited == nil {
+        *visited = make(map[string]bool)
+    }
 
-    visited[start] = true
+    // if visited: return []
+    if (*visited)[start] {
+        return []string{}
+    }
+
+    (*visited)[start] = true
     queue := []string{start}
 
     for len(queue) != 0 {
@@ -161,11 +185,43 @@ func (g *Graph) BFS(start string) []string {
         result = append(result, vertex)
 
         for _, edge := range g.Vertices[vertex].Edges {
-            if !visited[edge.To] {
-                visited[edge.To] = true
+            if !(*visited)[edge.To] {
+                (*visited)[edge.To] = true
                 queue = append(queue, edge.To)
             }
         }
     }
     return result
+}
+
+func (g *Graph) FindConnectedComponents() [][]string {
+    visited := make(map[string]bool)
+    var components [][]string
+
+    for id := range g.Vertices {
+        if !visited[id] {
+            currComponent := g.BFSHelper(id, &visited) // can switch with DFSHelper
+            components = append(components, currComponent)
+        }
+    }
+
+    return components
+}
+
+func (g *Graph) IsConnected(v1, v2 string) bool {
+    if _, v1Existed := g.Vertices[v1]; v1Existed {
+        return false
+    }
+    if _, v2Existed := g.Vertices[v2]; v2Existed {
+        return false
+    }
+
+    dfsV1 := g.DFS(v1)
+    for _, vertex := range dfsV1 {
+        if v2 == vertex {
+            return true
+        }
+    }
+
+    return false
 }

@@ -22,5 +22,11 @@ type GraphInterface interface {
 
     // 走訪演算法
     DFS(start string) []string // 深度優先搜尋
+    DFSHelper(start string, visited *map[string]bool) []string
     BFS(start string) []string // 廣度優先搜尋
+    BFSHelper(start string, visited *map[string]bool) []string
+
+    // Connected Components
+    FindConnectedComponents() [][]string // find all connected component
+    IsConnected(v1, v2 string) bool // chack both components are connected
 }
