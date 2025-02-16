@@ -8,6 +8,18 @@ func NewGraph() *Graph {
     return &Graph{Vertices: make(map[string]*Vertex)}
 }
 
+type DisjointSet struct {
+    Parent map[string]string
+    Rank   map[string]int
+}
+
+func NewDisjointSet() *DisjointSet {
+    return &DisjointSet{
+        Parent: make(map[string]string),
+        Rank:   make(map[string]int),
+    }
+}
+
 type GraphInterface interface {
     // 基本操作
     AddVertex(id string)
@@ -28,6 +40,12 @@ type GraphInterface interface {
 
     // Connected Components
     FindConnectedComponents() [][]string // find all connected component
-    IsConnected(v1, v2 string) bool // chack both components are connected
+    IsConnected(v1, v2 string) bool      // chack both components are connected
     FindStronglyConnectedComponents() [][]string
+
+    // MST
+    KruskalMST() []struct {
+        From, To string
+        Weight   int
+    }
 }

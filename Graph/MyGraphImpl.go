@@ -2,6 +2,7 @@ package Graph
 
 import (
     "fmt"
+    "sort"
 )
 
 func (g *Graph) AddVertex(id string) {
@@ -295,6 +296,88 @@ func (g *Graph) dfsCollectSCC(vertex string, visited map[string]bool, component 
     for _, edge := range g.Vertices[vertex].Edges {
         if !visited[edge.To] {
             g.dfsCollectSCC(edge.To, visited, component)
+        }
+    }
+}
+
+// KruskalMST Kruskal's Algorithm
+func (g *Graph) KruskalMST() []struct {
+    From, To string
+    Weight   int
+} {
+    var mst []struct {
+        From, To string
+        Weight   int
+    }
+    var edges []struct {
+        From, To string
+        Weight   int
+    }
+
+    // collect all edge
+    for from, vertex := range g.Vertices {
+        for _, edge := range vertex.Edges {
+            edges = append(edges, struct {
+                From, To string
+                Weight   int
+            }{
+                From:   from,
+                To:     edge.To,
+                Weight: edge.Weight,
+            })
+        }
+    }
+
+    // sort edge by edge weight
+    sort.Slice(edges, func(i, j int) bool {
+        return edges[i].Weight < edges[j].Weight
+    })
+
+    // init set
+    ds := NewDisjointSet()
+    for id := range g.Vertices {
+        ds.Parent[id] = id
+        ds.Rank[id] = 0
+    }
+
+    // loop edge
+    for _, edge := range edges {
+        from := edge.From
+        to := edge.To
+
+        if ds.Find(from) != ds.Find(to) { // check cycle
+            mst = append(mst, edge)
+            ds.Union(from, to)
+        }
+
+        // mst edge equal to vertices-1: break
+        if len(mst) == len(g.Vertices)-1 {
+            break
+        }
+    }
+
+    return mst
+}
+
+func (ds *DisjointSet) Find(v string) string {
+    if ds.Parent[v] != v {
+        ds.Parent[v] = ds.Find(ds.Parent[v])
+    }
+    return ds.Parent[v]
+}
+
+func (ds *DisjointSet) Union(v1, v2 string) {
+    root1 := ds.Find(v1)
+    root2 := ds.Find(v2)
+
+    if root1 != root2 {
+        if ds.Rank[root1] > ds.Rank[root2] {
+            ds.Parent[root2] = root1
+        } else if ds.Rank[root1] < ds.Rank[root2] {
+            ds.Parent[root1] = root2
+        } else {
+            ds.Parent[root2] = root1
+            ds.Rank[root1]++
         }
     }
 }

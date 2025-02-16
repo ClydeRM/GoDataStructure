@@ -97,6 +97,59 @@ func TestGraph_FindStronglyConnectedComponents(t *testing.T) {
 	fmt.Printf("Strong Connected Component : %v \n", graph.FindStronglyConnectedComponents())
 }
 
+func TestGraph_KruskalMST(t *testing.T) {
+	graph := NewGraph()
+	graph.AddVertex("0")
+	graph.AddVertex("1")
+	graph.AddVertex("2")
+	graph.AddVertex("3")
+	graph.AddVertex("4")
+	graph.AddVertex("5")
+	graph.AddVertex("6")
+
+	graph.AddEdge("0", "1", 5)
+	graph.AddEdge("1", "0", 5)
+
+	graph.AddEdge("0", "5", 3)
+	graph.AddEdge("5", "0", 3)
+
+	graph.AddEdge("1", "2", 10)
+	graph.AddEdge("2", "1", 10)
+
+	graph.AddEdge("1", "4", 1)
+	graph.AddEdge("4", "1", 1)
+
+	graph.AddEdge("1", "6", 4)
+	graph.AddEdge("6", "1", 4)
+
+	graph.AddEdge("2", "3", 5)
+	graph.AddEdge("3", "2", 5)
+
+	graph.AddEdge("2", "6", 8)
+	graph.AddEdge("6", "2", 8)
+
+	graph.AddEdge("3", "4", 7)
+	graph.AddEdge("4", "3", 7)
+
+	graph.AddEdge("3", "6", 9)
+	graph.AddEdge("6", "3", 9)
+
+	graph.AddEdge("4", "5", 6)
+	graph.AddEdge("5", "4", 6)
+
+	graph.AddEdge("4", "6", 2)
+	graph.AddEdge("6", "4", 2)
+
+	graph.AddEdge("5", "6", 6)
+	graph.AddEdge("6", "5", 6)
+
+
+	graph.PrintGraph()
+
+	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
+	fmt.Printf("KruskalMST: %v \n", graph.KruskalMST())
+}
+
 func graphToSlice(graph *Graph) []string {
 	var result []string
 
