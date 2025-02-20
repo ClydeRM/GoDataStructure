@@ -1,6 +1,7 @@
 package Graph
 
 import (
+    "container/heap"
     "fmt"
     "sort"
 )
@@ -380,4 +381,42 @@ func (ds *DisjointSet) Union(v1, v2 string) {
             ds.Rank[root1]++
         }
     }
+}
+
+func (g *Graph) PrimMST(start string) []*Edge {
+    if _, exists := g.Vertices[start]; !exists {
+        return nil
+    }
+
+    var mst []*Edge
+    visited := make(map[string]bool)
+    pq := &PriorityQueue{}
+    heap.Init(pq)
+
+    visited[start] = true
+    // add all edge of start vertex in pq
+    for _, edge := range g.Vertices[start].Edges {
+        heap.Push(pq, edge)
+    }
+
+    for pq.Len() > 0 {
+        // pop smallest weight edge from pq
+        minEdge := heap.Pop(pq).(*Edge)
+
+        if visited[minEdge.To] {
+            continue
+        }
+
+        // add into MST
+        mst = append(mst, minEdge)
+        visited[minEdge.To] = true
+
+        for _, edge := range g.Vertices[minEdge.To].Edges {
+            if !visited[edge.To] {
+                heap.Push(pq, edge)
+            }
+        }
+    }
+
+    return mst
 }

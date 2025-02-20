@@ -20,7 +20,25 @@ func NewDisjointSet() *DisjointSet {
     }
 }
 
-type GraphInterface interface {
+type PriorityQueue []*Edge
+
+func (pq *PriorityQueue) Len() int           { return len(*pq) }
+func (pq *PriorityQueue) Less(i, j int) bool { return (*pq)[i].Weight < (*pq)[j].Weight }
+func (pq *PriorityQueue) Swap(i, j int)      { (*pq)[i], (*pq)[j] = (*pq)[j], (*pq)[i] }
+
+func (pq *PriorityQueue) Push(x interface{}) {
+    *pq = append(*pq, x.(*Edge))
+}
+
+func (pq *PriorityQueue) Pop() interface{} {
+    old := *pq
+    n := len(old)
+    item := old[n-1]
+    *pq = old[:n-1]
+    return item
+}
+
+type Interface interface {
     // 基本操作
     AddVertex(id string)
     AddEdge(from, to string, weight int)
@@ -48,4 +66,5 @@ type GraphInterface interface {
         From, To string
         Weight   int
     }
+    PrimMST(start string) []*Edge
 }

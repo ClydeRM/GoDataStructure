@@ -87,7 +87,6 @@ func TestGraph_FindStronglyConnectedComponents(t *testing.T) {
 
 	graph.AddEdge("8", "6", 1)
 
-
 	graph.PrintGraph()
 	fmt.Printf("BFS()0 : %v \n", graph.BFS("0"))
 	fmt.Printf("BFS()4 : %v \n", graph.BFS("4"))
@@ -143,11 +142,16 @@ func TestGraph_KruskalMST(t *testing.T) {
 	graph.AddEdge("5", "6", 6)
 	graph.AddEdge("6", "5", 6)
 
-
 	graph.PrintGraph()
 
 	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
 	fmt.Printf("KruskalMST: %v \n", graph.KruskalMST())
+
+	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
+	fmt.Printf("PrimMST: \n")
+	for _, edge := range graph.PrimMST("2") {
+		fmt.Printf("To: %v, Weight: %v\n", edge.To, edge.Weight)
+	}
 }
 
 func graphToSlice(graph *Graph) []string {
