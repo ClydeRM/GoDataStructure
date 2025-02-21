@@ -8,6 +8,10 @@ func NewGraph() *Graph {
     return &Graph{Vertices: make(map[string]*Vertex)}
 }
 
+type MSTEdge struct {
+    From, To string
+    Weight   int
+}
 type DisjointSet struct {
     Parent map[string]string
     Rank   map[string]int
@@ -20,14 +24,14 @@ func NewDisjointSet() *DisjointSet {
     }
 }
 
-type PriorityQueue []*Edge
+type PriorityQueue []*MSTEdge
 
 func (pq *PriorityQueue) Len() int           { return len(*pq) }
 func (pq *PriorityQueue) Less(i, j int) bool { return (*pq)[i].Weight < (*pq)[j].Weight }
 func (pq *PriorityQueue) Swap(i, j int)      { (*pq)[i], (*pq)[j] = (*pq)[j], (*pq)[i] }
 
 func (pq *PriorityQueue) Push(x interface{}) {
-    *pq = append(*pq, x.(*Edge))
+    *pq = append(*pq, x.(*MSTEdge))
 }
 
 func (pq *PriorityQueue) Pop() interface{} {
@@ -35,6 +39,45 @@ func (pq *PriorityQueue) Pop() interface{} {
     n := len(old)
     item := old[n-1]
     *pq = old[:n-1]
+    return item
+}
+
+type ShortPath struct {
+    Node  string
+    Dist  int
+    Index int
+}
+
+type SPPriorityQueue []*ShortPath
+
+func (sppq *SPPriorityQueue) Len() int {
+    return len(*sppq)
+}
+
+func (sppq *SPPriorityQueue) Less(i, j int) bool {
+    return (*sppq)[i].Dist < (*sppq)[j].Dist
+}
+
+func (sppq *SPPriorityQueue) Swap(i, j int) {
+    (*sppq)[i], (*sppq)[j] = (*sppq)[j], (*sppq)[i]
+    (*sppq)[i].Index = i
+    (*sppq)[j].Index = j
+}
+
+func (sppq *SPPriorityQueue) Push(x interface{}) {
+    item := x.(*ShortPath)
+    item.Index = len(*sppq)
+    *sppq = append(*sppq, item)
+}
+
+func (sppq *SPPriorityQueue) Pop() interface{} {
+    old := *sppq
+    n := len(*sppq)
+    item := old[n-1]
+    item.Index = -1
+    old[n-1] = nil
+    *sppq = old[:n-1]
+
     return item
 }
 
@@ -62,9 +105,9 @@ type Interface interface {
     FindStronglyConnectedComponents() [][]string
 
     // MST
-    KruskalMST() []struct {
-        From, To string
-        Weight   int
-    }
-    PrimMST(start string) []*Edge
+    KruskalMST() []MSTEdge
+    PrimMST(start string) []*MSTEdge
+
+    // ShortestPath
+    DijkstraShortPath(start string) map[string]int
 }

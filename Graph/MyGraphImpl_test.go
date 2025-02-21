@@ -96,7 +96,7 @@ func TestGraph_FindStronglyConnectedComponents(t *testing.T) {
 	fmt.Printf("Strong Connected Component : %v \n", graph.FindStronglyConnectedComponents())
 }
 
-func TestGraph_KruskalMST(t *testing.T) {
+func TestGraph_MST(t *testing.T) {
 	graph := NewGraph()
 	graph.AddVertex("0")
 	graph.AddVertex("1")
@@ -142,7 +142,7 @@ func TestGraph_KruskalMST(t *testing.T) {
 	graph.AddEdge("5", "6", 6)
 	graph.AddEdge("6", "5", 6)
 
-	graph.PrintGraph()
+	//	graph.PrintGraph()
 
 	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
 	fmt.Printf("KruskalMST: %v \n", graph.KruskalMST())
@@ -150,7 +150,7 @@ func TestGraph_KruskalMST(t *testing.T) {
 	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
 	fmt.Printf("PrimMST: \n")
 	for _, edge := range graph.PrimMST("2") {
-		fmt.Printf("To: %v, Weight: %v\n", edge.To, edge.Weight)
+		fmt.Printf("From: %v, To: %v, Weight: %v\n", edge.From, edge.To, edge.Weight)
 	}
 }
 

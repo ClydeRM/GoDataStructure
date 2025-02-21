@@ -302,29 +302,17 @@ func (g *Graph) dfsCollectSCC(vertex string, visited map[string]bool, component 
 }
 
 // KruskalMST Kruskal's Algorithm
-func (g *Graph) KruskalMST() []struct {
-    From, To string
-    Weight   int
-} {
-    var mst []struct {
-        From, To string
-        Weight   int
-    }
-    var edges []struct {
-        From, To string
-        Weight   int
-    }
+func (g *Graph) KruskalMST() []MSTEdge {
+    var mst []MSTEdge
+    var edges []MSTEdge
 
     // collect all edge
     for from, vertex := range g.Vertices {
         for _, edge := range vertex.Edges {
-            edges = append(edges, struct {
-                From, To string
-                Weight   int
-            }{
-                From:   from,
-                To:     edge.To,
-                Weight: edge.Weight,
+            edges = append(edges, MSTEdge{
+                from,
+                edge.To,
+                edge.Weight,
             })
         }
     }
@@ -383,12 +371,12 @@ func (ds *DisjointSet) Union(v1, v2 string) {
     }
 }
 
-func (g *Graph) PrimMST(start string) []*Edge {
+func (g *Graph) PrimMST(start string) []*MSTEdge {
     if _, exists := g.Vertices[start]; !exists {
         return nil
     }
 
-    var mst []*Edge
+    var mst []*MSTEdge
     visited := make(map[string]bool)
     pq := &PriorityQueue{}
     heap.Init(pq)
@@ -396,12 +384,12 @@ func (g *Graph) PrimMST(start string) []*Edge {
     visited[start] = true
     // add all edge of start vertex in pq
     for _, edge := range g.Vertices[start].Edges {
-        heap.Push(pq, edge)
+        heap.Push(pq, &MSTEdge{start, edge.To, edge.Weight})
     }
 
     for pq.Len() > 0 {
         // pop smallest weight edge from pq
-        minEdge := heap.Pop(pq).(*Edge)
+        minEdge := heap.Pop(pq).(*MSTEdge)
 
         if visited[minEdge.To] {
             continue
@@ -413,7 +401,7 @@ func (g *Graph) PrimMST(start string) []*Edge {
 
         for _, edge := range g.Vertices[minEdge.To].Edges {
             if !visited[edge.To] {
-                heap.Push(pq, edge)
+                heap.Push(pq, &MSTEdge{minEdge.To, edge.To, edge.Weight})
             }
         }
     }
