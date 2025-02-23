@@ -45,6 +45,7 @@ func (pq *PriorityQueue) Pop() interface{} {
 type ShortPath struct {
     To  string
     Dist  int
+    Index int
 }
 
 type SPPriorityQueue []*ShortPath
@@ -68,7 +69,7 @@ func (sppq *SPPriorityQueue) Push(x interface{}) {
 
 func (sppq *SPPriorityQueue) Pop() interface{} {
     old := *sppq
-    n := len(*sppq)
+    n := len(old)
     item := old[n-1]
     old[n-1] = nil
     *sppq = old[:n-1]
