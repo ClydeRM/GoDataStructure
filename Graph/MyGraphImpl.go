@@ -3,6 +3,7 @@ package Graph
 import (
     "container/heap"
     "fmt"
+    "math"
     "sort"
 )
 
@@ -407,4 +408,49 @@ func (g *Graph) PrimMST(start string) []*MSTEdge {
     }
 
     return mst
+}
+func (g *Graph) DijkstraShortPath(start string) (map[string]int, map[string]string) {
+    if _, isExists := g.Vertices[start]; !isExists {
+        return nil, nil
+    }
+
+    dist := make(map[string]int)
+    prev := make(map[string]string)
+
+    // set all of vertex in dist map are infinity
+    for id := range g.Vertices {
+        dist[id] = math.MaxInt
+    }
+    dist[start] = 0
+
+    // Priority Queue
+    pq := &SPPriorityQueue{}
+    heap.Init(pq)
+    heap.Push(pq, &ShortPath{To: start, Dist: 0})
+
+    for pq.Len() > 0 {
+        // get smallest edge
+        curr := heap.Pop(pq).(*ShortPath)
+        currentVertex := curr.To
+        currentDist := curr.Dist
+
+        // skip if curr > dist map
+        if currentDist > dist[currentVertex] {
+            continue
+        }
+
+        // update neighbor
+        for _, edge := range g.Vertices[currentVertex].Edges {
+            newDist := currentDist + edge.Weight
+
+            // if newDist is smaller than record
+            if newDist < dist[edge.To] {
+                dist[edge.To] = newDist
+                prev[edge.To] = currentVertex
+                heap.Push(pq, &ShortPath{To: edge.To, Dist: newDist})
+            }
+        }
+    }
+
+    return dist, prev
 }

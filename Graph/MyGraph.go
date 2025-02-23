@@ -43,9 +43,8 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 type ShortPath struct {
-    Node  string
+    To  string
     Dist  int
-    Index int
 }
 
 type SPPriorityQueue []*ShortPath
@@ -60,13 +59,10 @@ func (sppq *SPPriorityQueue) Less(i, j int) bool {
 
 func (sppq *SPPriorityQueue) Swap(i, j int) {
     (*sppq)[i], (*sppq)[j] = (*sppq)[j], (*sppq)[i]
-    (*sppq)[i].Index = i
-    (*sppq)[j].Index = j
 }
 
 func (sppq *SPPriorityQueue) Push(x interface{}) {
     item := x.(*ShortPath)
-    item.Index = len(*sppq)
     *sppq = append(*sppq, item)
 }
 
@@ -74,7 +70,6 @@ func (sppq *SPPriorityQueue) Pop() interface{} {
     old := *sppq
     n := len(*sppq)
     item := old[n-1]
-    item.Index = -1
     old[n-1] = nil
     *sppq = old[:n-1]
 

@@ -130,5 +130,16 @@
             ],
             "testRunPattern": "TestGraph_MST"
         },
+        {
+            "type": "go-test",
+            "name": "Go test Graph_ShortPath_test",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Graph/"
+            ],
+            "testRunPattern": "TestGraph_ShortPath"
+        },
     ]
 }
