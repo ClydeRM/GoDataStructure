@@ -409,6 +409,8 @@ func (g *Graph) PrimMST(start string) []*MSTEdge {
 
     return mst
 }
+
+// Dijkstra Algorithm (Non-Negative weight)
 func (g *Graph) DijkstraShortPath(start string) (map[string]int, map[string]string) {
     if _, isExists := g.Vertices[start]; !isExists {
         return nil, nil
@@ -453,4 +455,49 @@ func (g *Graph) DijkstraShortPath(start string) (map[string]int, map[string]stri
     }
 
     return dist, prev
+}
+
+// Bellman-Ford Algorithm (Negative cycle check)
+func (g *Graph) BellmanFordShortPath(start string) (map[string]int, map[string]string, bool) {
+    if _, exists := g.Vertices[start]; !exists {
+        return nil, nil, false
+    }
+
+    dist := make(map[string]int)
+    prev := make(map[string]string)
+
+    for id := range g.Vertices {
+        dist[id] = math.MaxInt
+    }
+    dist[start] = 0
+
+    // V-1 times Relaxation.
+    V := len(g.Vertices)
+    for i := 0; i < V-1; i++ {
+        updated := false // 用於提前結束迴圈
+        for _, vertex := range g.Vertices {
+            for _, edge := range vertex.Edges {
+                if dist[vertex.Id] != math.MaxInt && dist[vertex.Id]+edge.Weight < dist[edge.To] {
+                    dist[edge.To] = dist[vertex.Id] + edge.Weight
+                    prev[edge.To] = vertex.Id
+                    updated = true
+                }
+            }
+        }
+        // 若這輪沒有更新任何邊，代表已經收斂，提前結束
+        if !updated {
+            break
+        }
+    }
+
+    // Negative cycle check
+    for _, u := range g.Vertices {
+        for _, edge := range u.Edges {
+            if dist[u.Id] != math.MaxInt && dist[u.Id]+edge.Weight < dist[edge.To] {
+                return nil, nil, true // 發現負權重循環
+            }
+        }
+    }
+
+    return dist, prev, false
 }

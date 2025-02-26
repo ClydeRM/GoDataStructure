@@ -43,9 +43,8 @@ func (pq *PriorityQueue) Pop() interface{} {
 }
 
 type ShortPath struct {
-    To  string
-    Dist  int
-    Index int
+    To   string
+    Dist int
 }
 
 type SPPriorityQueue []*ShortPath
@@ -101,9 +100,10 @@ type Interface interface {
     FindStronglyConnectedComponents() [][]string
 
     // MST
-    KruskalMST() []MSTEdge
-    PrimMST(start string) []*MSTEdge
+    KruskalMST() []MSTEdge           // TC: O(E logE)
+    PrimMST(start string) []*MSTEdge // TC: O(E logV)
 
     // ShortestPath
-    DijkstraShortPath(start string) map[string]int
+    DijkstraShortPath(start string) (map[string]int, map[string]string)          // TC: O((V+E) logV)
+    BellmanFordShortPath(start string) (map[string]int, map[string]string, bool) // TC: O(VE)
 }

@@ -141,5 +141,16 @@
             ],
             "testRunPattern": "TestGraph_ShortPath"
         },
+        {
+            "type": "go-test",
+            "name": "Go test Graph_NegativeCycle_ShortPath",
+            "workingDir": "$PROJECT_DIR$",
+            "goExecPath": "/usr/local/bin/go",
+            "buildParams": [
+                "-v",
+                "$PROJECT_DIR$/Graph/"
+            ],
+            "testRunPattern": "TestGraph_NegativeCycleShortPath"
+        },
     ]
 }

@@ -139,7 +139,6 @@ func TestGraph_MST(t *testing.T) {
 	graph.AddEdge("4", "6", 2)
 	graph.AddEdge("6", "4", 2)
 
-
 	//	graph.PrintGraph()
 
 	// expect MST: [{1 4 1} {4 6 2} {0 5 3} {0 1 5} {2 3 5} {4 3 7}]
@@ -204,6 +203,50 @@ func TestGraph_ShortPath(t *testing.T) {
 	// expect 2 to 5 short path is:  [2 6 4 5]
 	path := ReconstructPath(prevVertex, "2", "5")
 	fmt.Println("2 to 5 short path is: ", path)
+
+	// expect ShortPath: map[0:15 1:10 2:0 3:5 4:10 5:16 6:8]
+	shortPath, prevVertex2, hasNegativeCycle := graph.BellmanFordShortPath("2")
+	fmt.Printf("BellmanFordShortPath: %v, hasNegativeCycle: %v \n", shortPath, hasNegativeCycle)
+
+	// expect 2 to 5 short path is:  [2 6 4 5]
+	path2 := ReconstructPath(prevVertex2, "2", "5")
+	fmt.Println("2 to 5 short path is: ", path2)
+}
+
+func TestGraph_NegativeCycleShortPath(t *testing.T) {
+	graph := NewGraph()
+	graph.AddVertex("0")
+	graph.AddVertex("1")
+	graph.AddVertex("2")
+	graph.AddVertex("3")
+	graph.AddVertex("4")
+	graph.AddVertex("5")
+
+	graph.AddEdge("0", "1", 5)
+
+	graph.AddEdge("1", "2", 6)
+	graph.AddEdge("1", "4", -4)
+
+	graph.AddEdge("2", "4", -3)
+	graph.AddEdge("2", "5", -2)
+
+	graph.AddEdge("3", "2", 4)
+
+	graph.AddEdge("4", "3", 1)
+	graph.AddEdge("4", "5", 6)
+
+	graph.AddEdge("5", "0", 3)
+	graph.AddEdge("5", "1", 7)
+
+	//	graph.PrintGraph()
+
+	// expect BellmanFordShortPath: map[0:0 1:5 2:6 3:2 4:1 5:4], hasNegativeCycle: false
+	shortPath, prevVertex, hasNegativeCycle := graph.BellmanFordShortPath("0")
+	fmt.Printf("BellmanFordShortPath: %v, hasNegativeCycle: %v \n", shortPath, hasNegativeCycle)
+
+	// expect 0 to 5 short path is:  [0 1 4 3 2 5]
+	path := ReconstructPath(prevVertex, "0", "5")
+	fmt.Println("0 to 5 short path is: ", path)
 }
 
 func graphToSlice(graph *Graph) []string {
@@ -217,13 +260,13 @@ func graphToSlice(graph *Graph) []string {
 }
 
 func ReconstructPath(prev map[string]string, start, end string) []string {
-    var path []string
-    for to := end; to != ""; to = prev[to] {
-        path = append([]string{to}, path...)
-    }
+	var path []string
+	for to := end; to != ""; to = prev[to] {
+		path = append([]string{to}, path...)
+	}
 
-    if path[0] != start {
-        return []string{} // can not arrive
-    }
-    return path
+	if path[0] != start {
+		return []string{} // can not arrive
+	}
+	return path
 }
