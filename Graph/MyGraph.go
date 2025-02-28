@@ -104,6 +104,7 @@ type Interface interface {
     PrimMST(start string) []*MSTEdge // TC: O(E logV)
 
     // ShortestPath
-    DijkstraShortPath(start string) (map[string]int, map[string]string)          // TC: O((V+E) logV)
+    DijkstraShortPath(start string) (map[string]int, map[string]string)          // best TC: O((V+E) logV), worst TC: O(E+V2)
     BellmanFordShortPath(start string) (map[string]int, map[string]string, bool) // TC: O(VE)
+    FloydWarshallShortPath() (map[string]map[string]int, bool)                   // TC: O(V³)
 }

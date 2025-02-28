@@ -501,3 +501,49 @@ func (g *Graph) BellmanFordShortPath(start string) (map[string]int, map[string]s
 
     return dist, prev, false
 }
+
+// Floyd-Warshall Algorithm (All to other SP)
+func (g *Graph) FloydWarshallShortPath() (map[string]map[string]int, bool) {
+    // 2d map[v][u] = weight
+    dist := make(map[string]map[string]int)
+
+    // init dist
+    for id1 := range g.Vertices {
+        dist[id1] = make(map[string]int)
+        for id2 := range g.Vertices {
+            if id1 == id2 {
+                dist[id1][id2] = 0 // 自己到自己距離為 0
+            } else {
+                dist[id1][id2] = math.MaxInt // 預設為無限大
+            }
+        }
+    }
+
+    for id, vertex := range g.Vertices {
+        for _, edge := range vertex.Edges {
+            dist[id][edge.To] = edge.Weight
+        }
+    }
+
+    for k := range g.Vertices { // 中繼點
+        for i := range g.Vertices { // 起點
+            for j := range g.Vertices { // 終點
+                // 確保 i → k、k → j 可達，避免數值溢出
+                if dist[i][k] != math.MaxInt && dist[k][j] != math.MaxInt {
+                    if newDist := dist[i][k] + dist[k][j]; newDist < dist[i][j] {
+                        dist[i][j] = newDist
+                    }
+                }
+            }
+        }
+    }
+
+    // Negative cycle check
+    for id := range g.Vertices {
+        if dist[id][id] < 0 {
+            return nil, true // 發現負權重循環
+        }
+    }
+
+    return dist, false
+}

@@ -249,6 +249,41 @@ func TestGraph_NegativeCycleShortPath(t *testing.T) {
 	fmt.Println("0 to 5 short path is: ", path)
 }
 
+func TestGraph_FloydWarshall_ShortPath(t *testing.T) {
+	graph := NewGraph()
+	graph.AddVertex("0")
+	graph.AddVertex("1")
+	graph.AddVertex("2")
+	graph.AddVertex("3")
+
+	graph.AddEdge("0", "1", 2)
+	graph.AddEdge("0", "2", 6)
+	graph.AddEdge("0", "3", 8)
+
+	graph.AddEdge("1", "2", -2)
+	graph.AddEdge("1", "3", 3)
+
+	graph.AddEdge("2", "0", 4)
+	graph.AddEdge("2", "3", 1)
+
+	//graph.PrintGraph()
+
+	// expect BellmanFordShortPath: map[0:0 1:5 2:6 3:2 4:1 5:4], hasNegativeCycle: false
+	shortPath, hasNegativeCycle := graph.FloydWarshallShortPath()
+
+	if hasNegativeCycle {
+		fmt.Println("圖中存在負權重循環")
+	} else {
+		fmt.Println("所有點對最短距離：")
+		for from, row := range shortPath {
+			for to, d := range row {
+				fmt.Printf("%s → %s: %d\n", from, to, d)
+			}
+		}
+	}
+
+}
+
 func graphToSlice(graph *Graph) []string {
 	var result []string
 
